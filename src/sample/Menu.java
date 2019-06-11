@@ -1,19 +1,48 @@
 package sample;
 
+import javafx.scene.media.Media;
+import org.omg.Messaging.SYNC_WITH_TRANSPORT;
+import javafx.scene.media.MediaPlayer;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.nio.file.Paths;
 
-public class Menu extends Object implements KeyListener {
+public class Menu extends Object {
 
-    private int index, total;
+    private int index, total, t;
 
+    private boolean pause;
+
+    private MediaPlayer mediaPlayer;
+  //  private Thread music;
     public Menu() {
         Controller.getInstance().removeAll();
-        this.total = 3;
+        this.total = 4;
         this.index = 0;
         this.x = Controller.WIDTH / 2 - 40;
         this.y = Controller.HEIGHT / 4;
+        mediaPlayer =  new MediaPlayer(new Media(Paths.get(sample.MediaPlayer.PLAY_STARTCARTOON).toUri().toString()));
+//        music = new Thread(String.valueOf(mediaPlayer));
+        mediaPlayer.play();
+        //music.start();
+       // new Thread(this).start();
+    }
+
+    public void turnOnMusic() {
+        pause = false;
+        mediaPlayer.play();
+        /*synchronized (music) {
+            music.notify();
+        }*/
+
+    }
+
+    public void turnOffMusic() {
+        mediaPlayer.pause();
+        pause = true;
     }
 
     @Override
@@ -32,9 +61,14 @@ public class Menu extends Object implements KeyListener {
         g.drawString("排行榜",x, y + 60);
         g.setColor(c);
         if(index == 2){
-            g.setColor(Color.ORANGE);
+            g.setColor(Color.orange);
         }
-        g.drawString("退出游戏",x, y + 120);
+        g.drawString("背景音乐",x, y + 120);
+        g.setColor(c);
+        if(index == 3){
+            g.setColor(Color.orange);
+        }
+        g.drawString("退出游戏",x, y + 180);
         g.setColor(c);
     }
 
@@ -43,13 +77,6 @@ public class Menu extends Object implements KeyListener {
         this.index = index;
     }
 
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-
-    }
-
-    @Override
     public void keyPressed(KeyEvent e) {
         if(e.getKeyCode() == KeyEvent.VK_DOWN) {
             setIndex((index + 1) % total);
@@ -68,14 +95,38 @@ public class Menu extends Object implements KeyListener {
                     Controller.getInstance().rankList = new RankList();
                     break;
                 case 2:
+                    if(pause) {
+                        turnOnMusic();
+                    }else{
+                        turnOffMusic();
+                    }
+                    break;
+                case 3:
                     System.exit(0);
                     break;
             }
         }
     }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
 
-    }
+    /*@Override
+    public void run() {
+        try {
+            while(true) {
+                if(pause) {
+                    synchronized (music) {
+                        try {
+                            music.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                Thread.sleep(35);
+                System.out.println(t++ + " " + pause);
+            }
+        }catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }*/
 }

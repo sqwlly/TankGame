@@ -8,13 +8,13 @@ public class MysqlDemo {
 
     // JDBC 驱动名及数据库 URL
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final String DB_URL = "jdbc:mysql://111.231.145.72:3306/TankGame?useSSL=true";
+    static final String DB_URL = "jdbc:mysql://localhost:3306/TankGame?useSSL=true";
 
     // 数据库的用户名与密码，需要根据自己的设置
-    static final String USER = "sqwlly";
-    static final String PASS = "sqw123";
+    static final String USER = "test";
+    static final String PASS = "test123";
     Connection conn;
-    public MysqlDemo() {
+    protected MysqlDemo() {
         conn = null;
         try {
             // 注册 JDBC 驱动
@@ -35,7 +35,7 @@ public class MysqlDemo {
         }
     }
 
-    public Vector<Player> showRank() {
+    protected Vector<Player> showRank() {
         String sql = "select * from playerlist order by playerscore desc limit 10";
         Vector<Player> vector = new Vector<>();
 
@@ -61,7 +61,7 @@ public class MysqlDemo {
         return vector;
     }
 
-    public void savePlayerName(Player player) {
+    protected void savePlayerName(Player player) {
 
         String sql;
         sql = "INSERT INTO playerlist(playername,playerscore) values(?,?)";
