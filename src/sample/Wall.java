@@ -9,7 +9,7 @@ public class Wall extends Object {
 
     public static final int WIDTH = 30, HEIGHT = 30;
 
-    private int HP = 4;
+    private int HP = 7;
 
     private boolean isAlive;
 

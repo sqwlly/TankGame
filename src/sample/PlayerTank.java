@@ -8,16 +8,16 @@ import java.io.IOException;
 
 public class PlayerTank extends Tank{
 
-    private static Image playerImg;
-
-    private int speed = 3;
+    private static Image[] playerImgs = new Image[5];
+    private int speed = 3, TYPE;
 
     private Born born;
 
-    public PlayerTank(int x, int y, int width, int height,Direction direction) {
-        super(x, y, width, height, Controller.getInstance().playerHP = 10, direction);
+    public PlayerTank(int x, int y, int width, int height,Direction direction, int TYPE) {
+        super(x, y, width, height, 5, direction);
         this.x = x;
         this.y = y;
+        this.TYPE = TYPE;
         this.width = width;
         this.height = height;
         this.direction = direction;
@@ -29,7 +29,8 @@ public class PlayerTank extends Tank{
      * */
     static {
         try {
-            playerImg = ImageIO.read(new File("images/Tanks.png"));
+            playerImgs[0] = ImageIO.read(new File("images/Tanks.png"));
+            playerImgs[1] = ImageIO.read(new File("images/Tanks_6.png"));
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "系统文件丢失\n原因：加载图片素材失败！");
         }
@@ -44,7 +45,7 @@ public class PlayerTank extends Tank{
             born.draw(g);
             return;
         }
-        g.drawImage(playerImg, x, y, x + Tank.WIDTH, y + Tank.HEIGHT, imgx, imgy, imgx + 60, imgy + 60, Controller.getInstance());
+        g.drawImage(playerImgs[TYPE], x, y, x + Tank.WIDTH, y + Tank.HEIGHT, imgx, imgy, imgx + 60, imgy + 60, Controller.getInstance());
     }
 
     @Override

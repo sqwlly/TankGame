@@ -16,7 +16,7 @@ public class Controller extends JPanel {
     public JFrame game_jam;
 
 
-    public int playerHP;
+    public int player1HP = 5, player2HP = 5;
 
     public static final int WIDTH = 666 - 6, HEIGHT = 598 - 27;
 
@@ -44,7 +44,7 @@ public class Controller extends JPanel {
     /*      游戏变量数组区域结束         */
 
     /*      游戏绘画变量区域开始         */
-    PlayerTank player;
+    PlayerTank player1, player2;
     PlayerBullet playerBullet;
     EnemyBullet enemyBullet;
     EnemyTank enemyTank;
@@ -57,10 +57,11 @@ public class Controller extends JPanel {
     Victory victory;
     JPanel jPanel1;
     Listening listener;
-    JLabel jLabel1, jLabel2, jLabel3, cnt, hp, score;
+    JLabel tankCntLabel, player1HPLabel, player2HPLabel, scoreLabel, cnt, hp1, hp2, score;
     RankList rankList;
-    /*      游戏绘画变量区域结束         */
     Menu menu;
+    /*      游戏绘画变量区域结束         */
+
     public Controller() {
         tc = this;
         menu = new Menu();
@@ -89,7 +90,8 @@ public class Controller extends JPanel {
             while (true) {
                 try {
                     repaint();
-                    player.Move();
+                    player1.Move();
+                    player2.Move();
                     Thread.sleep(30);
                 } catch (Exception e) {
 
@@ -106,7 +108,8 @@ public class Controller extends JPanel {
         game_jam.getContentPane().removeAll();
         enemyBullets.clear();
         enemyTanks.clear();
-        playerHP = 10;
+        player1HP = 5;
+        player2HP = 5;
         gameOver = new GameOver();
         victory = new Victory();
         map = new Map(0);
@@ -116,16 +119,20 @@ public class Controller extends JPanel {
         new Thread(new MediaPlayer(MediaPlayer.PLAY_ENTERGAME)).start();
         initTank();
         jPanel1 = new JPanel();
-        jLabel1 = new JLabel("坦克数量");
-        jLabel2 = new JLabel("玩家生命值");
-        jLabel3 = new JLabel("分数");
-        hp = new JLabel("10");
-        this.add(jLabel3);
+        tankCntLabel = new JLabel("坦克数量");
+        player1HPLabel = new JLabel("玩家A生命值");
+        player2HPLabel = new JLabel("玩家B生命值");
+        scoreLabel = new JLabel("分数");
+        hp1 = new JLabel("5");
+        hp2 = new JLabel("5");
+        this.add(scoreLabel);
         this.add(score);
-        this.add(jLabel1);
+        this.add(tankCntLabel);
         this.add(cnt);
-        this.add(jLabel2);
-        this.add(hp);
+        this.add(player1HPLabel);
+        this.add(hp1);
+        this.add(player2HPLabel);
+        this.add(hp2);
         game_jam.add(this);
         game_jam.setVisible(true);
     }
@@ -134,12 +141,16 @@ public class Controller extends JPanel {
      * @programe 初始化游戏坦克
      */
     public void initTank() {
-        player = new PlayerTank(200, 600, Tank.WIDTH, Tank.HEIGHT, Direction.up);
+        player1 = new PlayerTank(200, 600, Tank.WIDTH, Tank.HEIGHT, Direction.up,0);
+        player2 = new PlayerTank(400, 600, Tank.WIDTH, Tank.HEIGHT, Direction.up,1);
         enemyTanks.add(new EnemyTank(200, 200, Tank.WIDTH, Tank.HEIGHT, Direction.left, 2));
         enemyTanks.add(new EnemyTank(400, 300, Tank.WIDTH, Tank.HEIGHT, Direction.down, 3));
         enemyTanks.add(new EnemyTank(100, 0, Tank.WIDTH, Tank.HEIGHT, Direction.left, 4));
         for (int i = 0; i < 3; ++i) {
             enemyTanks.add(new EnemyTank(100 + i * (Tank.WIDTH + 30), 0, Tank.WIDTH, Tank.HEIGHT, Direction.down, i + 1));
+        }
+        for(int i = 0; i < 3; ++i) {
+            enemyTanks.add(new EnemyTank(200 + i * (Tank.WIDTH + 30),150,Tank.WIDTH,Tank.HEIGHT,Direction.up,i));
         }
     }
 
@@ -152,26 +163,38 @@ public class Controller extends JPanel {
         //玩家与普通墙
         for (int i = 0; i < map.walls.size(); ++i) {
             wall = map.walls.get(i);
-            if (player.getRec().intersects(wall.getRec())) {
-                player.Stay();
-                break;
+            if (player1.getRec().intersects(wall.getRec())) {
+                player1.Stay();
+              //  break;
+            }
+            if (player2.getRec().intersects(wall.getRec())) {
+                player2.Stay();
+//                break;
             }
         }
 
         //玩家与铁墙
         for (int i = 0; i < map.steels.size(); ++i) {
             steel = map.steels.get(i);
-            if (player.getRec().intersects(steel.getRec())) {
-                player.Stay();
-                break;
+            if (player1.getRec().intersects(steel.getRec())) {
+                player1.Stay();
+                //break;
+            }
+            if (player2.getRec().intersects(steel.getRec())) {
+                player2.Stay();
+//                break;
             }
         }
 
         //玩家与河流
         for (int i = 0; i < map.water.size(); ++i) {
             water = map.water.get(i);
-            if (player.getRec().intersects(water.getRec())) {
-                player.Stay();
+            if (player1.getRec().intersects(water.getRec())) {
+                player1.Stay();
+                //break;
+            }
+            if (player2.getRec().intersects(water.getRec())) {
+                player2.Stay();
                 break;
             }
         }
@@ -197,6 +220,14 @@ public class Controller extends JPanel {
         //敌方坦克与铁墙
         for (int i = 0; i < enemyTanks.size(); ++i) {
             enemyTank = enemyTanks.get(i);
+            if(enemyTank.getRec().intersects(player1.getRec())) {
+                player1.Stay();
+                enemyTank.Stay();
+            }
+            if(enemyTank.getRec().intersects(player2.getRec())) {
+                player2.Stay();
+                enemyTank.Stay();
+            }
             for (int j = 0; j < map.steels.size(); ++j) {
                 steel = map.steels.get(j);
                 if (enemyTank.getRec().intersects(steel.getRec())) {
@@ -244,12 +275,13 @@ public class Controller extends JPanel {
             return;
         }
 
-        if(player == null)return;
+        if(player1 == null || player2 == null)return;
         crashCheck();
         //绘画游戏坦克数量
         cnt.setText(String.valueOf(Math.max(0, enemyTanks.size())));
         //绘画游戏玩家血量
-        hp.setText(String.valueOf(Math.max(0, playerHP)));
+        hp1.setText(String.valueOf(Math.max(0, player1HP)));
+        hp2.setText(String.valueOf(Math.max(0, player2HP)));
         //地图
         map.draw(g);
         //老窝
@@ -259,18 +291,20 @@ public class Controller extends JPanel {
             victory.draw(g);
         }
 
-        if (!player.isAlive()) {
+        if (!player1.isAlive() && !player2.isAlive()) {
             home.setLife(false);
             gameOver.draw(g);
         }
 
         if (!home.isAlive()) {
-            player.setLife(false);
+            player1.setLife(false);
+            player2.setLife(false);
             gameOver.draw(g);
         }
 
         //玩家坦克
-        player.draw(g);
+        player1.draw(g);
+        player2.draw(g);
 
         //敌方坦克
         for (int i = 0; i < enemyTanks.size(); ++i) {

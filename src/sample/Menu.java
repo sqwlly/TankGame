@@ -4,20 +4,22 @@ import javafx.scene.media.Media;
 import org.omg.Messaging.SYNC_WITH_TRANSPORT;
 import javafx.scene.media.MediaPlayer;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
 
-public class Menu extends Object {
+public class Menu extends Object{
 
     private int index, total, t;
 
     private boolean pause;
 
     private MediaPlayer mediaPlayer;
-  //  private Thread music;
+//    private Thread music;
     public Menu() {
         Controller.getInstance().removeAll();
         this.total = 4;
@@ -26,8 +28,9 @@ public class Menu extends Object {
         this.y = Controller.HEIGHT / 4;
         mediaPlayer =  new MediaPlayer(new Media(Paths.get(sample.MediaPlayer.PLAY_STARTCARTOON).toUri().toString()));
 //        music = new Thread(String.valueOf(mediaPlayer));
-        mediaPlayer.play();
-        //music.start();
+//        mediaPlayer.play();
+        mediaPlayer.setAutoPlay(true);
+//        music.start();
        // new Thread(this).start();
     }
 
@@ -58,7 +61,7 @@ public class Menu extends Object {
         if(index == 1){
             g.setColor(Color.orange);
         }
-        g.drawString("排行榜",x, y + 60);
+        g.drawString("排 行 榜",x, y + 60);
         g.setColor(c);
         if(index == 2){
             g.setColor(Color.orange);
@@ -108,18 +111,13 @@ public class Menu extends Object {
         }
     }
 
-
-    /*@Override
+   /* @Override
     public void run() {
         try {
             while(true) {
-                if(pause) {
+                if(!music.isAlive()) {
                     synchronized (music) {
-                        try {
-                            music.wait();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
+                        //music.wait();
                     }
                 }
                 Thread.sleep(35);

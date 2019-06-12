@@ -54,6 +54,7 @@ public abstract class Tank extends Object {
         HP--;
         if(HP <= 0) {
             isAlive = false;
+            Controller.getInstance().booms.add(new Boom(x - Tank.WIDTH / 2 - PlayerBullet.WIDTH / 2, y - Tank.HEIGHT / 2 - PlayerBullet.HEIGHT / 2));
         }
     }
 

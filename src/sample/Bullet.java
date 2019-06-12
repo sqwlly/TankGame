@@ -70,7 +70,7 @@ public abstract class Bullet extends Object{
                         //击毁坦克可以增加分数
                         Controller.getInstance().score.setText(String.valueOf(Integer.parseInt(Controller.getInstance().score.getText()) + 10));
                         //增加爆炸对象
-                        Controller.getInstance().booms.add(new Boom(Controller.getInstance().enemyTanks.get(i).x - Tank.WIDTH / 2 - PlayerBullet.WIDTH / 2, Controller.getInstance().enemyTanks.get(i).y - Tank.HEIGHT / 2 - PlayerBullet.HEIGHT / 2));
+//                        Controller.getInstance().booms.add(new Boom(Controller.getInstance().enemyTanks.get(i).x - Tank.WIDTH / 2 - PlayerBullet.WIDTH / 2, Controller.getInstance().enemyTanks.get(i).y - Tank.HEIGHT / 2 - PlayerBullet.HEIGHT / 2));
                     }
                     this.setLife(false);
                     new Thread(new MediaPlayer(MediaPlayer.PLAY_HIT)).start(); //爆炸音效开始
@@ -79,11 +79,18 @@ public abstract class Bullet extends Object{
             }
             return false;
         }else{
-            if(this.getRec().intersects(Controller.getInstance().player.getRec())) {
+            if(this.getRec().intersects(Controller.getInstance().player1.getRec())) {
                 this.setLife(false);
                 new Thread(new MediaPlayer(MediaPlayer.PLAY_HIT)).start();
-                Controller.getInstance().playerHP--; //被敌方坦克击中，会减少血量
-                Controller.getInstance().player.HPDecrease();
+                Controller.getInstance().player1HP--; //被敌方坦克击中，会减少血量
+                Controller.getInstance().player1.HPDecrease();
+                return true;
+            }
+            if(this.getRec().intersects(Controller.getInstance().player2.getRec())) {
+                this.setLife(false);
+                new Thread(new MediaPlayer(MediaPlayer.PLAY_HIT)).start();
+                Controller.getInstance().player2HP--; //被敌方坦克击中，会减少血量
+                Controller.getInstance().player2.HPDecrease();
                 return true;
             }
             return false;
@@ -115,7 +122,8 @@ public abstract class Bullet extends Object{
         if(this.getRec().intersects(Controller.getInstance().home.getRec())) {
             Controller.getInstance().home.setLife(false);
             Controller.getInstance().gameOver = new GameOver();
-            Controller.getInstance().booms.add(new Boom(Controller.getInstance().player.x - Tank.WIDTH / 2 - PlayerBullet.WIDTH / 2, Controller.getInstance().player.y - Tank.HEIGHT / 2 - PlayerBullet.HEIGHT / 2));
+            Controller.getInstance().booms.add(new Boom(Controller.getInstance().player1.x - Tank.WIDTH / 2 - PlayerBullet.WIDTH / 2, Controller.getInstance().player1.y - Tank.HEIGHT / 2 - PlayerBullet.HEIGHT / 2));
+            Controller.getInstance().booms.add(new Boom(Controller.getInstance().player2.x - Tank.WIDTH / 2 - PlayerBullet.WIDTH / 2, Controller.getInstance().player2.y - Tank.HEIGHT / 2 - PlayerBullet.HEIGHT / 2));
             Controller.getInstance().enemyBullets.clear();
             Controller.getInstance().playerBullets.clear();
             return true;
